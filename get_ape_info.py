@@ -36,7 +36,10 @@ def get_ape_info(ape_id):
     response = requests.get(ipfs_url)
     metadata = response.json()
     data['image'] = metadata['image']
-    data['eyes'] = metadata['attributes'][0]['value']
+    for attribute in metadata.get('attributes', []):
+        if 'eyes' in attribute['trait_type'].lower():
+            data['eyes'] = attribute.get('value', '')
+            break
 
     assert isinstance(data, dict), f'get_ape_info{ape_id} should return a dict'
     assert all([a in data.keys() for a in
